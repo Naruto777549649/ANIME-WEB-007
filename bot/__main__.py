@@ -140,7 +140,6 @@ async def collect_users(_, msg: Message):
 
 # Background auto-drop function
 async def drop_waifu():
-    await app.wait_until_ready()
     while True:
         await asyncio.sleep(300)
         data = load_data()
