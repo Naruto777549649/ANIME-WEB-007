@@ -1,20 +1,20 @@
 from pyrogram import Client, filters
-from bot.db import load_data, save_data
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import Message
 import random, json, asyncio, os
 
-API_ID = 25698862  # Replace with your API ID
+API_ID = 25698862
 API_HASH = "7d7739b44f5f8c825d48cc6787889dbc"
 BOT_TOKEN = "7567689863:AAGsTCXf1YsS9H8_p1yW5wMUz6BjUJoOJF0"
 
 app = Client("waifu_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 DB_FILE = "waifus.json"
+GROUP_ID = -1002105592589  # <-- Replace with your actual group ID here
 GUESS_TIMEOUT = 60
 
 if not os.path.exists(DB_FILE):
     with open(DB_FILE, "w") as f:
-        json.dump({"waifus": [], "users": {}}, f)
+        json.dump({"waifus": [], "users": {}, "current_drop": None}, f)
 
 def load_data():
     with open(DB_FILE) as f:
@@ -28,7 +28,7 @@ def save_data(data):
 async def start(_, msg: Message):
     await msg.reply_text("**Konichiwa! I'm your Waifu Guess Bot.**\n\nUse /guess when a waifu appears and build your /harem!")
 
-@app.on_message(filters.command("upload") & filters.user([7019600964]))  # only you can upload
+@app.on_message(filters.command("upload") & filters.user([7019600964]))
 async def upload(_, msg: Message):
     try:
         args = msg.text.split(" ", 5)
@@ -62,7 +62,7 @@ async def broadcast(_, msg: Message):
     failed = 0
     for user_id in data["users"]:
         try:
-            await app.send_message(user_id, text[1])
+            await app.send_message(int(user_id), text[1])
         except:
             failed += 1
     await msg.reply(f"Broadcast done. Failed: {failed}")
@@ -109,39 +109,19 @@ async def mywaifu(_, msg: Message):
     w = random.choice(user_waifus)
     await msg.reply_photo(w["image"], caption=f"{w['rarity']} {w['character'].title()} from *{w['anime']}*")
 
-# Waifu drop simulator (drop every X minutes or manually for now)
-async def drop_waifu():
-    while True:
-        await asyncio.sleep(300)  # every 5 minutes
-        data = load_data()
-        if not data["waifus"]:
-            continue
-        waifu = random.choice(data["waifus"])
-        data["current_drop"] = waifu
-        save_data(data)
-        try:
-            await app.send_photo(
-                "your_group_id",  # Replace with group ID
-                waifu["image"],
-                caption=f"{waifu['rarity']} ᴀ {waifu['rarity_name']} ᴡᴀɪғᴜ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!\n"
-                        f"ǫᴜɪᴄᴋ! ᴜsᴇ /guess ɴᴀᴍᴇ ᴛᴏ ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ!"
-            )
-        except Exception as e:
-            print("Failed to drop:", e)
-
 @app.on_message(filters.command("force_drop") & filters.user([7019600964]))
 async def manual_drop(_, msg: Message):
     data = load_data()
     if not data["waifus"]:
         return await msg.reply("No waifus available to drop.")
-    
+
     waifu = random.choice(data["waifus"])
     data["current_drop"] = waifu
     save_data(data)
 
     try:
         await app.send_photo(
-            "your_group_id",  # Replace this with your group ID
+            GROUP_ID,
             waifu["image"],
             caption=f"{waifu['rarity']} ᴀ {waifu['rarity_name']} ᴡᴀɪғᴜ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!\n"
                     f"ǫᴜɪᴄᴋ! ᴜsᴇ /guess ɴᴀᴍᴇ ᴛᴏ ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ!"
@@ -158,6 +138,28 @@ async def collect_users(_, msg: Message):
         data["users"][uid] = []
         save_data(data)
 
+# Background auto-drop function
+async def drop_waifu():
+    await app.wait_until_ready()
+    while True:
+        await asyncio.sleep(300)
+        data = load_data()
+        if not data["waifus"]:
+            continue
+        waifu = random.choice(data["waifus"])
+        data["current_drop"] = waifu
+        save_data(data)
+        try:
+            await app.send_photo(
+                GROUP_ID,
+                waifu["image"],
+                caption=f"{waifu['rarity']} ᴀ {waifu['rarity_name']} ᴡᴀɪғᴜ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!\n"
+                        f"ǫᴜɪᴄᴋ! ᴜsᴇ /guess ɴᴀᴍᴇ ᴛᴏ ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ!"
+            )
+        except Exception as e:
+            print(f"[Drop Error] {e}")
+
+# Run the bot
 if __name__ == "__main__":
     app.start()
     loop = asyncio.get_event_loop()
