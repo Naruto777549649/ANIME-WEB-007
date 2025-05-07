@@ -1,4 +1,5 @@
 from pyrogram import Client, filters
+from bot.db import load_data, save_data
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 import random, json, asyncio, os
 
