@@ -53,7 +53,7 @@ async def upload(_, msg: Message):
     except Exception as e:
         await msg.reply(f"Error: {e}")
 
-@app.on_message(filters.command("broadcast") & filters.user([your_user_id]))
+@app.on_message(filters.command("broadcast") & filters.user([7019600964]))
 async def broadcast(_, msg: Message):
     text = msg.text.split(" ", 1)
     if len(text) < 2:
