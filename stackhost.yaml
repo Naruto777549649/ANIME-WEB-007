@@ -1,0 +1,15 @@
+user:
+  name: NARUTO
+  github: Naruto777549649
+
+language: "python"
+python_version: "3.10"
+
+commands:
+  build:
+    - "pip install -r requirements.txt"
+  start:
+    - "python3 -m bot"
+
+env:
+  - "ENVIRONMENT=production"
