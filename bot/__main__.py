@@ -5,7 +5,7 @@ import random, json, asyncio, os
 
 API_ID = 25698862  # Replace with your API ID
 API_HASH = "7d7739b44f5f8c825d48cc6787889dbc"
-BOT_TOKEN = "7851576039:AAFv6o74rF5Ej0DP_aa7AAHgDYXKorkbbj8"
+BOT_TOKEN = "7567689863:AAGsTCXf1YsS9H8_p1yW5wMUz6BjUJoOJF0"
 
 app = Client("waifu_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
