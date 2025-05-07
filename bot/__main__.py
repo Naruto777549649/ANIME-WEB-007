@@ -161,8 +161,9 @@ async def drop_waifu():
 
 # Run the bot
 if __name__ == "__main__":
-    app.start()
-    loop = asyncio.get_event_loop()
-    loop.create_task(drop_waifu())
-    print("Waifu Bot Running...")
-    loop.run_forever()
+    async def main():
+        await app.start()
+        asyncio.create_task(drop_waifu())
+        print("Waifu Bot Running...")
+
+    asyncio.run(main())
