@@ -131,7 +131,24 @@ async def drop_waifu():
 
 @app.on_message(filters.command("force_drop") & filters.user([7019600964]))
 async def manual_drop(_, msg: Message):
-    await drop_waifu()
+    data = load_data()
+    if not data["waifus"]:
+        return await msg.reply("No waifus available to drop.")
+    
+    waifu = random.choice(data["waifus"])
+    data["current_drop"] = waifu
+    save_data(data)
+
+    try:
+        await app.send_photo(
+            "your_group_id",  # Replace this with your group ID
+            waifu["image"],
+            caption=f"{waifu['rarity']} ᴀ {waifu['rarity_name']} ᴡᴀɪғᴜ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!\n"
+                    f"ǫᴜɪᴄᴋ! ᴜsᴇ /guess ɴᴀᴍᴇ ᴛᴏ ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ!"
+        )
+        await msg.reply("✅ Force drop successful!")
+    except Exception as e:
+        await msg.reply(f"❌ Force drop failed.\nError: `{e}`")
 
 @app.on_message(filters.private)
 async def collect_users(_, msg: Message):
