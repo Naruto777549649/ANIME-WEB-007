@@ -28,7 +28,7 @@ def save_data(data):
 async def start(_, msg: Message):
     await msg.reply_text("**Konichiwa! I'm your Waifu Guess Bot.**\n\nUse /guess when a waifu appears and build your /harem!")
 
-@app.on_message(filters.command("upload") & filters.user([your_user_id]))  # only you can upload
+@app.on_message(filters.command("upload") & filters.user([7019600964]))  # only you can upload
 async def upload(_, msg: Message):
     try:
         args = msg.text.split(" ", 5)
