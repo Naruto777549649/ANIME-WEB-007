@@ -2,9 +2,9 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 import random, json, asyncio, os
 
-API_ID = 12345678  # Replace with your API ID
-API_HASH = "your_api_hash"
-BOT_TOKEN = "your_bot_token"
+API_ID = 25698862  # Replace with your API ID
+API_HASH = "7d7739b44f5f8c825d48cc6787889dbc"
+BOT_TOKEN = "7851576039:AAFv6o74rF5Ej0DP_aa7AAHgDYXKorkbbj8"
 
 app = Client("waifu_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
