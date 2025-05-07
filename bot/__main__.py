@@ -129,7 +129,7 @@ async def drop_waifu():
         except Exception as e:
             print("Failed to drop:", e)
 
-@app.on_message(filters.command("force_drop") & filters.user([your_user_id]))
+@app.on_message(filters.command("force_drop") & filters.user([7019600964]))
 async def manual_drop(_, msg: Message):
     await drop_waifu()
 
